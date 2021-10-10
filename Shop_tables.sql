@@ -1,0 +1,111 @@
+-- Создаем базу данных my_shop
+DROP DATABASE IF EXISTS shop;
+CREATE DATABASE shop;
+
+USE shop;
+
+
+-- Создаем таблицы
+
+CREATE TABLE IF NOT EXISTS customers (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  org_or_person CHAR(1) NOT NULL COMMENT "Организация или физ.лицо",
+  org_name VARCHAR(40) DEFAULT NULL COMMENT "Имя организации",
+  gender CHAR(1) NOT NULL COMMENT "Пол",
+  first_name VARCHAR(20) NOT NULL COMMENT "Имя заказчика",
+  last_name VARCHAR(50) NOT NULL COMMENT "Фамилия заказчика",
+  email_address VARCHAR(40) NOT NULL UNIQUE COMMENT "Почта",
+  login_name VARCHAR(20) NOT NULL UNIQUE COMMENT "Логин заказчика",
+  login_password VARCHAR(20) NOT NULL COMMENT "Пароль заказчика",
+  phone_number VARCHAR(30) NOT NULL UNIQUE COMMENT "Телефон заказчика",
+  address VARCHAR(50) NOT NULL COMMENT "Адрес заказчика - улица, дом",
+  city VARCHAR(30) COMMENT "Город заказчика",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Заказчики"; 
+
+CREATE TABLE IF NOT EXISTS customer_payment_methods (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT UNSIGNED NOT NULL COMMENT "Ссылка на заказчика",
+  code INT UNSIGNED NOT NULL COMMENT "Ссылка на код оплаты заказчика",
+  credit_card_number VARCHAR(30) DEFAULT NULL COMMENT "Номер карты заказчика",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Методы оплаты заказчика"; 
+
+CREATE TABLE IF NOT EXISTS payment_methods (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  method_name VARCHAR(100) NOT NULL UNIQUE COMMENT "Описание метода оплаты",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Методы оплаты";
+
+DROP TABLE IF EXISTS products;
+CREATE TABLE IF NOT EXISTS products (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name_1 VARCHAR(255) COMMENT "Название товара",
+  description_1 TEXT COMMENT "Описание товара",
+  price DECIMAL (11,2) NOT NULL COMMENT "Цена товара",
+  catalog_id INT UNSIGNED NOT NULL COMMENT "Ссылка на каталог",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Товары"; 
+
+CREATE TABLE catalogs (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name_2 VARCHAR(50) NOT NULL UNIQUE COMMENT "Название раздела",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Разделы интернет-магазина";
+
+CREATE TABLE IF NOT EXISTS orders (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT UNSIGNED NOT NULL COMMENT "Ссылка на заказчика",
+  status_code INT UNSIGNED NOT NULL COMMENT "Ссылка на код статуса заказа",
+  date_order_placed DATE COMMENT "Дата создания заказа",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Заказы"; 
+
+CREATE TABLE orders_products (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  order_id INT UNSIGNED NOT NULL COMMENT "Ссылка на заказ",
+  product_id INT UNSIGNED NOT NULL COMMENT "Ссылка на товар",
+  total INT UNSIGNED DEFAULT 1 COMMENT "Количество заказанных товарных позиций",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Состав заказа";
+
+CREATE TABLE IF NOT EXISTS orders_status_codes (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  status_name VARCHAR(30) NOT NULL COMMENT "Описание кода статуса заказа",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Коды статусов заказа";
+
+CREATE TABLE IF NOT EXISTS shipments (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  order_id INT UNSIGNED NOT NULL COMMENT "Ссылка на заказ",
+  tracking_number VARCHAR(50) NOT NULL UNIQUE COMMENT "Номер отслеживания заказа",
+  shipment_date DATE COMMENT "Дата отправления заказа",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Отгрузки"; 
+
+CREATE TABLE warehouses (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL COMMENT "Название склада",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Склады";
+
+CREATE TABLE warehouses_products (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  warehouses_id INT UNSIGNED NOT NULL COMMENT "Ссылка на склад",
+  product_id INT UNSIGNED NOT NULL COMMENT "Ссылка на товар",
+  value INT UNSIGNED NOT NULL COMMENT "Запас товарной позиции на складе",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT "Запасы на складе";
+
+
